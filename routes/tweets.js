@@ -2,8 +2,8 @@ var express = require("express");
 var router = express.Router();
 const Tweet = require("../models/tweets");
 const User = require("../models/users");
-const { ObjectId } = require("mongoose");
 
+//TOUS LES TWEETS
 router.get("/", (req, res) => {
   Tweet.find().then((data) => {
     res.json({ tweet: data });
@@ -25,29 +25,27 @@ router.post("/", (req, res) => {
   });
 });
 
+//SUPP TWEET
 router.delete("/", (req, res) => {
   Tweet.deleteOne({ _id: req.body.id }).then(() => {
     res.json({ deleted: true });
   });
 });
 
-router.get("/:hashtag", (req, res) => {
-  Tweet.findMany().then((data) => {
+//Trouver par hashtag
+router.get("/hashtag", (req, res) => {
+  Tweet.find({ hashtag: req.body.hashtag }).then((data) => {
     res.json({ tweet: data });
   });
 });
 
 //Like tweet
 router.patch("/like", (req, res) => {
-  console.log(req.body.id);
   User.findOne({ token: req.body.token }).then((data) => {
-    console.log(data._id);
-
     Tweet.updateOne(
       { _id: req.body.id },
       { $addToSet: { likes: data._id } }
     ).then((data) => {
-      console.log(data);
       return res.json({ result: true });
     });
   });
