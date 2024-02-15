@@ -2,8 +2,8 @@ var express = require("express");
 var router = express.Router();
 const Tweet = require("../models/tweets");
 const User = require("../models/users");
-ObjectID = require('mongodb').ObjectID,
 
+//TOUS LES TWEETS
 router.get("/", (req, res) => {
   Tweet.find().then((data) => {
     res.json({ tweet: data });
@@ -25,33 +25,30 @@ router.post("/", (req, res) => {
   });
 });
 
+//SUPP TWEET
 router.delete("/", (req, res) => {
-  Tweet.deleteOne({ _id: ObjectId(req.body.id) }).then(() => {
+  Tweet.deleteOne({ _id: req.body.id }).then(() => {
     res.json({ deleted: true });
   });
 });
 
-router.get("/:hashtag", (req, res) => {
-  Tweet.findMany().then((data) => {
+//Trouver par hashtag
+router.get("/hashtag", (req, res) => {
+  Tweet.find({ hashtag: req.body.hashtag }).then((data) => {
     res.json({ tweet: data });
   });
 });
 
 //Like tweet
-router.put("/like", (req, res) => {
-  User.findOne({ token: req.body.token })
-    .then((data) => {
-      console.log(data._id);
-      console.log(ObjectId(req.body.id));
-
-      Tweet.updateOne(
-        { _id: ObjectId(req.body.id) },
-        { $addToSet: { likes: data._id } }
-      );
-    })
-    .then(() => {
-      res.json({ result: true });
+router.patch("/like", (req, res) => {
+  User.findOne({ token: req.body.token }).then((data) => {
+    Tweet.updateOne(
+      { _id: req.body.id },
+      { $addToSet: { likes: data._id } }
+    ).then((data) => {
+      return res.json({ result: true });
     });
+  });
 });
 
 module.exports = router;
