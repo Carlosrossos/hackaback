@@ -26,7 +26,7 @@ router.post("/", (req, res) => {
 });
 
 router.delete("/", (req, res) => {
-  Tweet.deleteOne({ _id: ObjectId(req.body.id) }).then(() => {
+  Tweet.deleteOne({ _id: req.body.id }).then(() => {
     res.json({ deleted: true });
   });
 });
@@ -38,20 +38,19 @@ router.get("/:hashtag", (req, res) => {
 });
 
 //Like tweet
-router.put("/like", (req, res) => {
-  User.findOne({ token: req.body.token })
-    .then((data) => {
-      console.log(data._id);
-      console.log(ObjectId(req.body.id));
+router.patch("/like", (req, res) => {
+  console.log(req.body.id);
+  User.findOne({ token: req.body.token }).then((data) => {
+    console.log(data._id);
 
-      Tweet.updateOne(
-        { _id: ObjectId(req.body.id) },
-        { $addToSet: { likes: data._id } }
-      );
-    })
-    .then(() => {
-      res.json({ result: true });
+    Tweet.updateOne(
+      { _id: req.body.id },
+      { $addToSet: { likes: data._id } }
+    ).then((data) => {
+      console.log(data);
+      return res.json({ result: true });
     });
+  });
 });
 
 module.exports = router;
