@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const Tweet = require("../models/tweets");
 const User = require("../models/users");
-const { ObjectId } = require("mongoose");
+ObjectID = require('mongodb').ObjectID,
 
 router.get("/", (req, res) => {
   Tweet.find().then((data) => {
