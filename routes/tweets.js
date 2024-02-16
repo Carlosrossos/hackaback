@@ -12,11 +12,10 @@ router.get("/", (req, res) => {
 
 //Poster un tweet
 router.post("/", (req, res) => {
-  User.findOne({ token: req.body.token }).then((data) => {
+  User.findOne({ token: req.body.author }).then((data) => {
     const newTweet = new Tweet({
       text: req.body.text,
       date: req.body.date,
-      hashtag: req.body.hashtag,
       author: data._id,
     });
     newTweet.save().then(() => {
