@@ -51,4 +51,26 @@ router.patch("/like", (req, res) => {
   });
 });
 
+//Trier les tweets par trends
+router.get('/trends', (req, res) => {
+    Tweet.find({ text: { $regex: /#/ } })
+      .then(tweets => {
+        const hashtags = [];
+        for (const tweet of tweets) {
+          const filteredHashtags = tweet.text.split(' ').filter(word => word.startsWith('#') && word.length > 1);
+          hashtags.push(...filteredHashtags);
+        }
+        const trends = [];
+        for (const hashtag of hashtags) {
+          const trendIndex = trends.findIndex(trend => trend.hashtag === hashtag);
+          if (trendIndex === -1) {
+            trends.push({ hashtag, count: 1 });
+          } else {
+            trends[trendIndex].count++;
+          }
+        }
+        res.json({ result: true, trends: trends.sort((a, b) => b.count - a.count) });
+      });
+  });
+
 module.exports = router;
