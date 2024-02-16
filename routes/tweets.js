@@ -19,7 +19,7 @@ router.post("/", (req, res) => {
       author: data._id,
     });
     newTweet.save().then(() => {
-      res.json({ result: true });
+      res.json({ result: true, data: data});
     });
   });
 });
